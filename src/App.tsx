@@ -11,6 +11,7 @@ import { handleFetchTodos } from './utils/handleFetchTodos';
 import { handleDeleteTodos } from './utils/handleDeleteTodos';
 
 import { Header, TodoList, Footer, ErrorMessage, TodoItem } from './components';
+import { handleUpdateTodos } from './utils/handleUpdateTodos';
 
 export const App: FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -18,6 +19,10 @@ export const App: FC = () => {
   const [error, setError] = useState<Errors>(Errors.DEFAULT);
   const [idsForDelete, setIdsForDelete] = useState<number[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<FilterBy>(FilterBy.ALL);
+
+  const [idsForUpdate, setIdsForUpdate] = useState<number[]>([]);
+
+  const [newTodoData, setNewTodoData] = useState<Partial<Todo>>({});
 
   const completedTodosId = useMemo(() => {
     return getFilteredTodos(todos, FilterBy.COMPLETED).map(todo => todo.id);
@@ -38,6 +43,18 @@ export const App: FC = () => {
   }, [idsForDelete]);
 
   useEffect(() => {
+    if (idsForUpdate.length) {
+      handleUpdateTodos(
+        idsForUpdate,
+        newTodoData,
+        setTodos,
+        setIdsForUpdate,
+        setError,
+      );
+    }
+  }, [idsForUpdate, newTodoData]);
+
+  useEffect(() => {
     handleFetchTodos(setTodos, setError);
   }, []);
 
@@ -49,19 +66,30 @@ export const App: FC = () => {
         <Header
           todos={todos}
           tempTodo={tempTodo}
+          numberOfActiveTodos={numberOfActiveTodos}
           setTodos={setTodos}
           setError={setError}
           setTempTodo={setTempTodo}
+          setIdsForUpdate={setIdsForUpdate}
+          setNewTodoData={setNewTodoData}
         />
 
         <TodoList
           todos={filteredTodos}
           idsForDelete={idsForDelete}
+          idsForUpdate={idsForUpdate}
           setIdsForDelete={setIdsForDelete}
+          setIdsForUpdate={setIdsForUpdate}
+          setNewTodoData={setNewTodoData}
         />
 
         {tempTodo && (
-          <TodoItem todo={tempTodo} setIdsForDelete={setIdsForDelete} />
+          <TodoItem
+            todo={tempTodo}
+            setIdsForDelete={setIdsForDelete}
+            setIdsForUpdate={setIdsForUpdate}
+            setNewTodoData={setNewTodoData}
+          />
         )}
 
         {!!todos.length && (

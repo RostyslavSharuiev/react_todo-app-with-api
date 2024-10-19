@@ -11,17 +11,23 @@ import { USER_ID } from '../../constants/constants';
 interface Props {
   todos: Todo[];
   tempTodo: Todo | null;
+  numberOfActiveTodos: number;
   setTodos: (updateTodos: (todos: Todo[]) => Todo[]) => void;
   setError: (error: Errors) => void;
   setTempTodo: (todo: Todo | null) => void;
+  setIdsForUpdate: (prevIds: (ids: number[]) => number[]) => void;
+  setNewTodoData: (newData: Partial<Todo>) => void;
 }
 
 const Header: FC<Props> = ({
   todos,
   tempTodo,
+  numberOfActiveTodos,
   setTodos,
   setError,
   setTempTodo,
+  setIdsForUpdate,
+  setNewTodoData,
 }) => {
   const [title, setTitle] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,6 +72,13 @@ const Header: FC<Props> = ({
     }
   };
 
+  const handleToggleAll = () => {
+    todos.map(todo => {
+      setIdsForUpdate(currentIds => [...currentIds, todo.id]);
+      setNewTodoData({ completed: !todo.completed });
+    });
+  };
+
   useEffect(() => {
     inputRef.current?.focus();
   }, [todos, tempTodo]);
@@ -74,8 +87,11 @@ const Header: FC<Props> = ({
     <header className="todoapp__header">
       <button
         type="button"
-        className={cn('todoapp__toggle-all active')}
+        className={cn('todoapp__toggle-all', {
+          active: !numberOfActiveTodos,
+        })}
         data-cy="ToggleAllButton"
+        onClick={handleToggleAll}
       />
 
       <form onSubmit={handleFormSubmit}>
