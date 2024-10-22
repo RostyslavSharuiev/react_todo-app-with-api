@@ -78,6 +78,9 @@ export const TodoItem: FC<Props> = ({
     [title, handleTitleSave],
   );
 
+  const isLoaderShow =
+    !id || idsForDelete?.includes(id) || idsForUpdate?.includes(id);
+
   useEffect(() => {
     if (isEditing) {
       document.addEventListener('keyup', handleKeyUp);
@@ -107,7 +110,20 @@ export const TodoItem: FC<Props> = ({
         />
       </label>
 
-      {!isEditing ? (
+      {isEditing ? (
+        <form onSubmit={handleFormSubmit}>
+          <input
+            data-cy="TodoTitleField"
+            type="text"
+            className="todo__title-field"
+            placeholder="Empty todo will be deleted"
+            autoFocus
+            value={newTitle}
+            onChange={handleTitleChange}
+            onBlur={handleTitleSave}
+          />
+        </form>
+      ) : (
         <>
           <span data-cy="TodoTitle" className="todo__title">
             {title}
@@ -122,26 +138,12 @@ export const TodoItem: FC<Props> = ({
             ×
           </button>
         </>
-      ) : (
-        <form onSubmit={handleFormSubmit}>
-          <input
-            data-cy="TodoTitleField"
-            type="text"
-            className="todo__title-field"
-            placeholder="Empty todo will be deleted"
-            autoFocus
-            value={newTitle}
-            onChange={handleTitleChange}
-            onBlur={handleTitleSave}
-          />
-        </form>
       )}
 
       <div
         data-cy="TodoLoader"
         className={cn('modal overlay', {
-          'is-active':
-            !id || idsForDelete?.includes(id) || idsForUpdate?.includes(id),
+          'is-active': isLoaderShow,
         })}
       >
         <div className="modal-background has-background-white-ter" />
