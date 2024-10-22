@@ -6,6 +6,7 @@ import { Errors } from '../../types/Errors';
 
 import { addTodo } from '../../api/todos';
 import { handleError } from '../../utils/handleError';
+
 import { USER_ID } from '../../constants/constants';
 
 interface Props {
@@ -73,9 +74,11 @@ const Header: FC<Props> = ({
   };
 
   const handleToggleAll = () => {
+    const isAllTodosCompleted = todos.every(todo => todo.completed);
+
     todos.map(todo => {
       setIdsForUpdate(currentIds => [...currentIds, todo.id]);
-      setNewTodoData({ completed: !todo.completed });
+      setNewTodoData({ completed: isAllTodosCompleted ? false : true });
     });
   };
 

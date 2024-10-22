@@ -16,13 +16,14 @@ import { handleUpdateTodos } from './utils/handleUpdateTodos';
 export const App: FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
-  const [error, setError] = useState<Errors>(Errors.DEFAULT);
-  const [idsForDelete, setIdsForDelete] = useState<number[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<FilterBy>(FilterBy.ALL);
+  const [newTodoData, setNewTodoData] = useState<Partial<Todo>>({});
 
+  const [idsForDelete, setIdsForDelete] = useState<number[]>([]);
   const [idsForUpdate, setIdsForUpdate] = useState<number[]>([]);
 
-  const [newTodoData, setNewTodoData] = useState<Partial<Todo>>({});
+  const [error, setError] = useState<Errors>(Errors.DEFAULT);
+
+  const [selectedFilter, setSelectedFilter] = useState<FilterBy>(FilterBy.ALL);
 
   const completedTodosId = useMemo(() => {
     return getFilteredTodos(todos, FilterBy.COMPLETED).map(todo => todo.id);
